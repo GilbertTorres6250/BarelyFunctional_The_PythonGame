@@ -1,14 +1,32 @@
-def attack(target):
-    target["health"] -= 10
+from random import randint
 
-def block(user):
-    pass
+def attack(user, target):
+    damage = 10
+    if target["shield"] > 0:
+        absorbed = min(damage, target["shield"])
+        target["shield"] -= absorbed
+        damage -= absorbed
+        print("BLOCKED")
+    target["health"] -= damage
 
-def heal(self):
-    pass
 
-def heavy(target):
-    target["health"] -= 10
+def block(user, target):
+    user["shield"]+= 10
+    print("BLOCK")
+
+def heal(user, target):
+    user["health"]+=10
+    print(f"HEALED 10 HEALTH")
+    print(f"The {user} now has {user['health']} health")
+
+def heavy(user, target):
+    damage = randint(5,20)
+    if target["shield"] > 0:
+        absorbed = min(damage, target["shield"])
+        target["shield"] -= absorbed
+        damage -= absorbed
+    target["health"] -= damage
+    print(f"WHACKED, {damage} DAMAGE")
 
 
 # map the numbers in your deck to real functions
