@@ -1,42 +1,56 @@
 from random import randint
 
-def attack(user, target):
-    damage = 10
+def check_shield(target, damage):
     if target["shield"] > 0:
         absorbed = min(damage, target["shield"])
         target["shield"] -= absorbed
         damage -= absorbed
-        print("BLOCKED")
+        print(f"🛡🛡🛡BLOCKED {absorbed} DAMAGE🛡🛡🛡")
+    return damage
+
+def attack(user, target, level):
+    damage = 10 * level
+    print(f"⚔⚔⚔SLASH, {damage} DAMAGE DEALT⚔⚔⚔")
+    damage = check_shield(target,damage)
     target["health"] -= damage
 
+def block(user, target, level):
+    user["shield"]+= 10 * level
+    print(f"🛡🛡🛡BLOCK, +{user['shield']} SHIELD🛡🛡🛡")
 
-def block(user, target):
-    user["shield"]+= 10
-    print("BLOCK")
+def heal(user, target, level):
+    user["health"]+= 10 * level
+    print(f"❣❣❣HEALED {10* level} HEALTH TO {user['health']} HEALTH❣❣❣")
 
-def heal(user, target):
-    user["health"]+=10
-    print(f"HEALED 10 HEALTH")
-    print(f"The {user} now has {user['health']} health")
-
-def heavy(user, target):
-    damage = randint(5,20)
-    if target["shield"] > 0:
-        absorbed = min(damage, target["shield"])
-        target["shield"] -= absorbed
-        damage -= absorbed
+def heavy(user, target, level):
+    damage = randint(5,20) + ((level-1)*10)
+    damage = check_shield(target,damage)
     target["health"] -= damage
-    print(f"WHACKED, {damage} DAMAGE")
+    print(f"⚒⚒⚒WHACKED, {damage} DAMAGE⚒⚒⚒")
 
+def chance(user, target, level):
+    print("!!!FLAIL!!!")
+    hit = randint(1,3)
+    if hit % 2 != 0:
+        damage = 0
+        print("✖✖✖MISS✖✖✖")
+    else:
+        damage = 20 * level
+        print(f"✔✔✔LANDED {damage} DAMAGE✔✔✔")
+        damage = check_shield(target, damage)
+    target["health"] -= damage
 
-# map the numbers in your deck to real functions
 function_map = {
     1: attack,
     2: block,
     3: heal,
-    4: heavy
+    4: heavy,
+    5: chance
 }
 
 def convert(move):
     move = int(move)
-    return function_map.get(move, None)
+    return function_map.get(move)
+
+def get_card_level(deck, card_id):
+    return deck.count(card_id)
