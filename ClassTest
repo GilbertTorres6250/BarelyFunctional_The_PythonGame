@@ -1,0 +1,109 @@
+import GameFunctions as GF
+from random import randint
+from random import randrange
+class Character:
+	id = []
+	def __init__(self, group, health):
+		self.health = health
+		self.max_health = health
+		self.group = group
+		self.shield = 0
+		self.deck = []
+		self.hand = []
+		Character.id.append(self)
+	def add_card(self, card):
+		self.deck.append(card)
+	def convert_hand(self):
+		for x in self.deck:
+			y= GF.convert(x)
+			level = GF.get_card_level(self.deck, x) #?counts the duplicates and stacks them
+			self.hand.append(f"{y.__name__} (Lvl {level})")
+		print(list(dict.fromkeys(self.hand)))
+	def display_health(self):
+		full = "█"
+		empty = "░"
+		current_health = int(self.health)
+		missing_health = int(self.max_health - current_health)
+		#print(current_health)
+		#print(missing_health)
+		name = self.__class__.__name__
+		print(f"[{name}:{full * current_health}{empty * missing_health}]")
+
+class Player(Character):
+	def __init__(self):
+		super().__init__("player_group", 10)
+
+class Enemy(Character):
+	def __init__(self, health=100):
+		super().__init__("enemy_group", health)
+
+class Bee(Enemy):
+	def __init__(self):
+		super().__init__(health=8)
+class Zombie(Enemy):
+	def __init__(self):
+		super().__init__(health=10)
+class Brute(Enemy):
+	def __init__(self):
+		super().__init__(health=12)
+
+monster_map = {
+    1: Bee,
+    2: Zombie,
+    3: Brute,
+}
+class Shop:
+	offers = ["attack", "block", "heal", "heavy", "chance"]
+	current_shop = []
+	def __init__(self,size,user):
+		self.size=size
+		self.user=user
+
+	def open_shop(self):
+		Shop.current_shop.clear()
+		for _ in range(self.size):
+			Shop.current_shop.append(Shop.offers[randrange(0, 5)])
+		print(Shop.current_shop)#Prints shop
+		player_choice = int(input("PICK (1234): "))-1
+		if 0 <= player_choice < len(Shop.current_shop):
+			picked_move = Shop.current_shop[player_choice]
+			picked_move= Shop.offers.index(picked_move)
+			print(f"YOU JUST BOUGHT {GF.convert(picked_move+1).__name__.upper()}")
+			self.user.add_card(picked_move+1)
+		else:
+			print("WE DONT HAVE THAT IN STOCK")
+		self.user.convert_hand()
+
+
+'''current_shop = [shop["offers"][randint(0,4)],shop["offers"][randint(0,4)]]
+		print(Fore.YELLOW + "$$$SHOP TIME$$$")
+		print(current_shop)
+		player_input = int(input("pick one: ")) - 1
+		if 0 <= player_input < len(current_shop[player_input]):
+			picked_move = current_shop[player_input]
+			picked_move=shop["offers"].index(picked_move)
+			print(f"YOU JUST BOUGHT {FindableFunctions.convert(picked_move+1).__name__.upper()}")
+			player["deck"].append(picked_move+1)
+		else:
+			print("CARD NOT IN SHOP")'''
+'''
+print(player2.deck)#shows the empty deck
+Player.convert_hand(player2)#converts the numbers in deck to moves in hand
+print(player2.deck)#shows the numbers added
+print(player2.hand)#shows all the moves in hand
+print(list(dict.fromkeys(player2.hand)))#shows the move and level
+print(len(Character.id))
+print(Character.id.__getitem__(1).__class__.__name__)#prints character type
+print(Character.id.__getitem__(0).__class__.__name__)
+player1.display_health()
+player1.health-=1
+player1.display_health()#BAR HEALTH
+'''
+human=Player()
+shop=Shop(1,human)
+shop.open_shop()
+dan = Bee()
+eric = Brute()
+human.display_health()
+dan.display_health()
+eric.display_health()
